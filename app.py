@@ -1,0 +1,76 @@
+import streamlit as st
+import requests
+
+# Page setup
+st.set_page_config(page_title="DevOps AI Assistant", page_icon="🤖")
+
+st.title("🤖 DevOps AI Assistant")
+st.write("Ask me anything about AWS, Terraform, Kubernetes, Docker, Jenkins, and Linux.")
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display previous messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Chat input
+question = st.chat_input("Ask your DevOps question...")
+
+if question:
+    # Show user message
+    st.session_state.messages.append({"role": "user", "content": question})
+
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    # Build prompt
+    system_prompt = """
+You are a Senior DevOps Engineer.
+
+You are an expert in:
+- AWS
+- Terraform
+- Kubernetes
+- Docker
+- Jenkins
+- Ansible
+- Linux
+- CI/CD
+
+Give concise and practical answers with examples.
+"""
+
+    full_prompt = system_prompt + "\n\nUser Question:\n" + question
+
+    # Assistant response
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            try:
+                response = requests.post(
+                    "http://localhost:11434/api/generate",
+                    json={
+                        "model": "llama3",
+                        "prompt": full_prompt,
+                        "stream": False,
+                        "options": {
+                            "num_predict": 200
+                        }
+                    },
+                    timeout=120
+                )
+
+                response.raise_for_status()
+                answer = response.json().get("response", "No response received.")
+
+                st.markdown(answer)
+
+                # Save assistant response
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": answer}
+                )
+
+            except Exception as e:
+                st.error(f"Error: {e}")
