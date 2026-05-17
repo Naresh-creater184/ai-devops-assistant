@@ -9,10 +9,7 @@ st.title("🤖 DevOps AI Assistant")
 st.write("Ask me anything about AWS, Terraform, Kubernetes, Docker, Jenkins, and Linux.")
 
 # Ollama URL (works for both local + Docker)
-OLLAMA_URL = os.getenv(
-    "OLLAMA_HOST",
-    "http://host.docker.internal:11434"
-)
+OLLAMA_URL = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 
 # Initialize chat history
 if "messages" not in st.session_state:
