@@ -56,7 +56,7 @@ Give concise and practical answers with examples.
                 response = requests.post(
                     f"{OLLAMA_URL}/api/generate",
                     json={
-                        "model": "llama3",
+                        "model": "phi3",
                         "prompt": full_prompt,
                         "stream": False,
                         "options": {
