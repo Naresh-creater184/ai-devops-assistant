@@ -60,13 +60,14 @@ Give concise and practical answers with examples.
                         "prompt": full_prompt,
                         "stream": False,
                         "options": {
-                            "num_predict": 200
+                            "num_predict": 100
                         }
                     },
-                    timeout=120
+                    timeout=300
                 )
 
-                response.raise_for_status()
+                if response.status_code != 200:
+    st.error(response.text)
                 answer = response.json().get("response", "No response received.")
 
                 st.markdown(answer)
