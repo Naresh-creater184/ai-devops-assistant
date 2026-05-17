@@ -67,7 +67,7 @@ Give concise and practical answers with examples.
                 )
 
                 if response.status_code != 200:
-    st.error(response.text)
+                    st.error(response.text)
                 answer = response.json().get("response", "No response received.")
 
                 st.markdown(answer)
