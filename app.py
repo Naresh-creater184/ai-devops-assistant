@@ -1,11 +1,18 @@
 import streamlit as st
 import requests
+import os
 
 # Page setup
 st.set_page_config(page_title="DevOps AI Assistant", page_icon="🤖")
 
 st.title("🤖 DevOps AI Assistant")
 st.write("Ask me anything about AWS, Terraform, Kubernetes, Docker, Jenkins, and Linux.")
+
+# Ollama URL (works for both local + Docker)
+OLLAMA_URL = os.getenv(
+    "OLLAMA_HOST",
+    "http://host.docker.internal:11434"
+)
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -20,13 +27,13 @@ for message in st.session_state.messages:
 question = st.chat_input("Ask your DevOps question...")
 
 if question:
-    # Show user message
+    # Save user message
     st.session_state.messages.append({"role": "user", "content": question})
 
     with st.chat_message("user"):
         st.markdown(question)
 
-    # Build prompt
+    # System prompt
     system_prompt = """
 You are a Senior DevOps Engineer.
 
@@ -50,7 +57,7 @@ Give concise and practical answers with examples.
         with st.spinner("Thinking..."):
             try:
                 response = requests.post(
-                    "http://localhost:11434/api/generate",
+                    f"{OLLAMA_URL}/api/generate",
                     json={
                         "model": "llama3",
                         "prompt": full_prompt,
